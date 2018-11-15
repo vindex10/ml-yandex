@@ -1,4 +1,5 @@
 import os
+import inspect
 
 import pandas as pd
 import scipy as sp
@@ -19,15 +20,42 @@ def answer(func):
         counter = len(answer.cache) + 1
         answer.cache[func.__name__] = counter
 
+    func_args = inspect.signature(func).parameters
+    try:
+        file_num = func_args["fout"].default
+        file_num = 1 if file_num == inspect.Signature.empty else file_num
+    except KeyError:
+        file_num = 1
 
-    output_file = output/(str(counter).zfill(2) + "_" + func.__name__ + ".dat")
-    os.makedirs(os.path.dirname(output_file), exist_ok=True)
+    def get_filenames():
+        output_file = output/(str(counter).zfill(2) + "_" + func.__name__ + "{}.dat")
+        output_file = str(output_file)
+
+        if file_num > 1:
+            return [output_file.format(f"-{i}") for i in range(1, file_num+1)]
+        else:
+            return [output_file.format("")]
+
+    file_names = get_filenames()
+    os.makedirs(os.path.dirname(file_names[0]), exist_ok=True)
 
     def wrapped():
-        with open(output_file, "w") as f:
-            func(f)
+        files = []
 
-        print(f"*** OUTPUT ({output_file}) ***")
-        with open(output_file, "r") as f:
-            print(f.read())
+        for fname in file_names:
+            f = open(fname, "w")
+            files.append(f)
+
+        if len(files) == 1:
+            func(files[0])
+        else:
+            func(fout=files)
+
+        for f in files:
+            f.close()
+
+        for fname in file_names:
+            print(f"*** OUTPUT ({fname}) ***")
+            with open(fname, "r") as f:
+                print(f.read())
     return wrapped
