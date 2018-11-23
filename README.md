@@ -1,6 +1,6 @@
 Solutions for tasks in ML Yandex Course
 ---------------------------------------
 
-1. Pandas training
-2. Decision trees
-3. Metric methods. KNN
+1. Pandas training. Decision trees
+2. Metric methods. KNN
+3. Support Vector Machine. Application to TF-IDF
