@@ -7,3 +7,4 @@ Solutions for tasks in ML Yandex Course
 Classification metrics (accuracy, precision, recall, F1 measure).
 4. Multiparametric linear regression. Categorical features. Principal component analysis.
 5. Bagging and boosting. Random forest and boosted gradient classification.
+6. K-Means for reducing number of features
